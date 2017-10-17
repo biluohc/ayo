@@ -1,0 +1,17 @@
+[package]
+name = "ayo"
+version = "0.0.0"
+authors = ["biluohc <biluohc@qq.com>"]
+
+# [profile.release]
+# debug = true
+
+[dependencies]
+pretty_env_logger = "^0.1.1"
+lazy_static = "^0.2.9"
+num_cpus = "^1.2.1"
+mio = "^0.6.10"
+log= "^0.3.8"
+time = "^0.1"
+stderr = "0.8.0" 
+slab = "^0.4.0"
