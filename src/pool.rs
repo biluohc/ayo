@@ -72,9 +72,9 @@ pub struct Pool {
 
 impl Pool {
     pub fn new() -> io::Result<Self> {
-        let cpus = if cfg!(unix) { num_cpus::get() } else { 1usize };
-        let mut loops = Vec::with_capacity(cpus);
-        for idx in 0..cpus {
+        let cpus = Config::workers_number();
+        let mut loops = Vec::with_capacity(*cpus);
+        for idx in 0..*cpus {
             let (mp, sc) = channel::<WTcpStream>();
             let join_handle =
                 Builder::new().spawn(move || if let Err(e) = Server::new(sc, idx).event_loop() {
@@ -127,9 +127,34 @@ impl Pool {
 }
 
 lazy_static! {
+       static ref CONFIG: StaticMut<Config> =StaticMut::new(Config::new());
        static ref POOL:Pool =  Pool::new().unwrap();
 }
 
+#[derive(Debug)]
+pub struct Config {
+    workers_number: usize,
+}
+
+impl Config {
+    fn new() -> Self {
+        Config {
+            workers_number: if cfg!(unix) { num_cpus::get() } else { 1usize },
+        }
+    }
+    fn as_ref() -> &'static Self {
+        CONFIG.as_ref()
+    }
+    fn as_mut() -> &'static mut Self {
+        CONFIG.as_mut()
+    }
+    pub fn workers_number_set(number: usize) {
+        Self::as_mut().workers_number = number;
+    }
+    fn workers_number() -> &'static usize {
+        &Self::as_ref().workers_number
+    }
+}
 
 impl Pool {
     pub fn run<A: net::ToSocketAddrs>(socket_addr: A) -> io::Result<()> {

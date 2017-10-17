@@ -1,0 +1,7 @@
+[package]
+name = "ayo"
+version = "0.0.0"
+description = "empty lib to occupy a name."
+authors = ["biluohc <biluohc@qq.com>"]
+license = "MIT"
+[dependencies]
